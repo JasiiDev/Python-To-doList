@@ -147,8 +147,6 @@ def loadBasics():
         with open(fullPath, 'w') as f:
             f.write('#File from To-doList By JasiiDev\nPath=Unknown')
 
-
-
         folder_selected = filedialog.askdirectory(title='Selecciona una ruta de instalación')
         replace_line(fullPath, 1, 'Path={}'.format(folder_selected))
         print("To-doList: Folder route selected and saved.")
