@@ -6,7 +6,7 @@ import time
 root = Tk()
 root.withdraw()
 list = []
-version = "1.0.2"
+version = "1.0.3"
 
 
 def messageBox(title, text, style):
@@ -35,17 +35,20 @@ def replace_line(file_name, line_num, text):
     out.close()
 
 def getPath(type):
-    appdataFolder = os.getenv('LOCALAPPDATA')
-    path = os.path.join(appdataFolder, "To-DoList")
-    fullPath = path + '/app.init'
-    if type == 'init':
-        return fullPath
-    if type == 'file':
-        lines = open(fullPath, 'r').readlines()
-        listPath = lines[1]
-        listPath = listPath.replace('Path=', '')
-        fullListPath = listPath + '/list.txt'
-        return fullListPath
+    try:
+        appdataFolder = os.getenv('LOCALAPPDATA')
+        path = os.path.join(appdataFolder, "To-DoList")
+        fullPath = path + '/app.init'
+        if type == 'init':
+            return fullPath
+        if type == 'file':
+            lines = open(fullPath, 'r').readlines()
+            listPath = lines[1]
+            listPath = listPath.replace('Path=', '')
+            fullListPath = listPath + '/list.txt'
+            return fullListPath
+    except:
+        messageBox('Error', 'Internal error while get path', 0)
 
 def run():
     WelcomeMessage()
@@ -56,8 +59,6 @@ def run():
         except:
             messageBox('Error', 'Only> 1 or 2 or 3 or 4', 0)
             break
-
-
         if option == 1:
             while True:
                 item = input('Type item (q for leave) > ')
@@ -79,11 +80,7 @@ def run():
                     count += 1
                     i = i.replace('\n', '')
                     print('{}. {}'.format(count, i))
-
                 number = int(input('Type number: '))
-
-                # f = open(getPath('file'), 'r')
-                # lst = []
                 filename = getPath('file')
                 line_to_delete = number
                 initial_line = 1
@@ -104,7 +101,6 @@ def run():
             else:
                 WelcomeMessage()
                 print('[Info] Item list empty.')
-
         if option == 3:
             clear()
             lines = open(getPath('file'), 'r').readlines()
@@ -129,8 +125,6 @@ def run():
             else:
                 WelcomeMessage()
                 print("[Info] List is empty.")
-
-
         if option == 4:
             clear()
             print('Thank u! By JasiiDev')
@@ -140,16 +134,20 @@ def run():
 #def test():
     #Some stuff
 
+
 def loadBasics():
     appdataFolder = os.getenv('LOCALAPPDATA')
     path = os.path.join(appdataFolder, "To-DoList")
     fullPath = path + '/app.init'
 
     if not os.path.exists(path):
+        messageBox('To-doList JasiiDev', 'Welcome to Jasii To-DoList App :)', 0)
         os.mkdir(path)
         print("To-doList: Folder Created.")
         with open(fullPath, 'w') as f:
             f.write('#File from To-doList By JasiiDev\nPath=Unknown')
+
+
 
         folder_selected = filedialog.askdirectory(title='Selecciona una ruta de instalación')
         replace_line(fullPath, 1, 'Path={}'.format(folder_selected))
@@ -158,19 +156,27 @@ def loadBasics():
         if not os.path.exists(fullPath):
             with open(fullPath, 'w') as f:
                 f.write('#File from To-doList By JasiiDev\nPath=Unknown')
+
             folder_selected = filedialog.askdirectory(title='Selecciona una ruta de instalación')
             replace_line(fullPath, 1, 'Path={}'.format(folder_selected))
             print("To-doList: Folder route selected and saved.")
 
-    lines = open(fullPath, 'r').readlines()
-
-    listPath = lines[1]
-    listPath = listPath.replace('Path=', '')
-    fullListPath = listPath + '/list.txt'
-    if not os.path.exists(fullListPath):
-        with open(fullListPath, 'w') as f:
-            f.write('')
-            print("To-doList: List File is created.")
+    try:
+        lines = open(fullPath, 'r').readlines()
+        listPath = lines[1]
+        listPath = listPath.replace('Path=', '')
+        fullListPath = listPath + '/list.txt'
+        if not os.path.exists(fullListPath):
+            with open(fullListPath, 'w') as f:
+                f.write('')
+                print("To-doList: List File is created.")
+    except:
+        print("Creation error of List File")
+        print("Trying to fix...")
+        time.sleep(2)
+        print("FIX! Open the app ^^")
+        os.remove(getPath('init'))
+        os.remove(getPath('file'))
 
     if os.path.exists(path) and os.path.exists(fullListPath):
         run()
