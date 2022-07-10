@@ -6,7 +6,7 @@ import time
 root = Tk()
 root.withdraw()
 list = []
-version = "1.0.3"
+version = "1.0.4"
 
 
 def messageBox(title, text, style):
@@ -72,32 +72,41 @@ def run():
                     break
         if option == 2:
             clear()
-            lines = open(getPath('file'), 'r').readlines()
-            if len(lines) > 0:
-                print('[Info] All Item List>')
-                count = 0
-                for i in lines:
-                    count += 1
-                    i = i.replace('\n', '')
-                    print('{}. {}'.format(count, i))
-                number = int(input('Type number: '))
-                filename = getPath('file')
-                line_to_delete = number
-                initial_line = 1
-                file_lines = {}
-                with open(filename) as f:
-                    content = f.readlines()
-                for line in content:
-                    file_lines[initial_line] = line.strip()
-                    initial_line += 1
-                f = open(filename, "w")
-                for line_number, line_content in file_lines.items():
-                    if line_number != line_to_delete:
-                        f.write('{}\n'.format(line_content))
-                f.close()
-                clear()
-                WelcomeMessage()
-                print('[Info] Item> {} deleted.'.format(line_to_delete))
+            while True:
+                lines = open(getPath('file'), 'r').readlines()
+                if len(lines) > 0:
+                    print('[Info] All Item List>')
+                    count = 0
+                    for i in lines:
+                        count += 1
+                        i = i.replace('\n', '')
+                        print('{}. {}'.format(count, i))
+                    number = input('Type number: ')
+                    if number == 'q':
+                        break
+                    else:
+                        number = int(number)
+                        filename = getPath('file')
+                        line_to_delete = number
+                        initial_line = 1
+                        file_lines = {}
+                        with open(filename) as f:
+                            content = f.readlines()
+                        for line in content:
+                            file_lines[initial_line] = line.strip()
+                            initial_line += 1
+                        f = open(filename, "w")
+                        for line_number, line_content in file_lines.items():
+                            if line_number != line_to_delete:
+                                f.write('{}\n'.format(line_content))
+                        f.close()
+
+                        print('[Info] Item> {} deleted.'.format(line_to_delete))
+                        clear()
+                        if len(lines) == 1:
+                            clear()
+                            WelcomeMessage()
+                            break
             else:
                 WelcomeMessage()
                 print('[Info] Item list empty.')
